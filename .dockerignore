@@ -32,6 +32,7 @@ Thumbs.db
 
 # Documentation
 *.md
+!README.md
 docs/
 
 # Logs
