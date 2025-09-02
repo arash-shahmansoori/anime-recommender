@@ -27,7 +27,7 @@ ENV PATH="/root/.local/bin:/root/.cargo/bin:$PATH"
 
 # Copy dependency files first (for better caching)
 COPY pyproject.toml ./
-COPY FULL_DOCUMENTATION.md ./
+COPY README.md ./
 
 # Install Python dependencies
 # First try to find UV, then use it or fall back to pip

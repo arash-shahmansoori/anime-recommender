@@ -5,7 +5,7 @@ description = "An anime recommendation system using LLMs and vector embeddings"
 authors = [
     { name = "Sudhanshu" }
 ]
-readme = "FULL_DOCUMENTATION.md"
+readme = "README.md"
 requires-python = ">=3.10,<3.12"  # Python 3.10+ for scikit-learn compatibility
 
 # NOTE: Switched from HuggingFace embeddings to OpenAI embeddings to resolve
