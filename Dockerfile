@@ -54,6 +54,9 @@ EXPOSE 8501
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD curl -f http://localhost:8501/_stcore/health || exit 1
 
+# Set Python path to include the app directory
+ENV PYTHONPATH=/app:$PYTHONPATH
+
 # Run the app using UV environment
 CMD ["/app/.venv/bin/streamlit", "run", "app/app.py", \
      "--server.port=8501", \
