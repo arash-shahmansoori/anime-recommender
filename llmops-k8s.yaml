@@ -61,7 +61,7 @@ spec:
       containers:
       - name: anime-recommender
         image: anime-recommender:latest  # Update with your image name
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Never  # Use local image only
         ports:
         - containerPort: 8501
           name: streamlit
