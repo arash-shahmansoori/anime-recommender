@@ -1,0 +1,58 @@
+venv/
+logs/
+ANIME_RECOMMENDER.egg-info/
+chroma_db/
+app/chroma_db/
+
+# SECURITY - NEVER COMMIT THESE!
+.env
+.env.*
+*.env
+secrets.yaml
+*-secrets.yaml
+*.key
+*.pem
+*-prod.yaml
+*-staging.yaml
+
+# uv
+.venv/
+uv.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb

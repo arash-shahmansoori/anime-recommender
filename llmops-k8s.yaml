@@ -1,0 +1,120 @@
+# Anime Recommender Kubernetes Deployment
+# 
+# IMPORTANT: This file does NOT contain secrets. Before deploying:
+# 1. Create the secret with your API keys:
+#    kubectl create secret generic llmops-secrets \
+#      --from-literal=OPENAI_API_KEY='your-actual-key' \
+#      --from-literal=GROQ_API_KEY='your-actual-key'
+# 
+# 2. Then apply this file:
+#    kubectl apply -f llmops-k8s.yaml
+#
+# See k8s-secrets-README.md for detailed security instructions
+
+# ConfigMap for application configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: llmops-config
+  labels:
+    app: anime-recommender
+data:
+  EMBEDDING_MODEL_NAME: "text-embedding-3-small"
+  MODEL_NAME: "llama-3.1-8b-instant"
+  PERSIST_DIR: "/app/chroma_db"
+
+---
+# PersistentVolumeClaim for vector store
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: llmops-pvc
+  labels:
+    app: anime-recommender
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anime-recommender
+  labels:
+    app: anime-recommender
+    version: "1.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anime-recommender
+  template:
+    metadata:
+      labels:
+        app: anime-recommender
+        version: "1.0"
+    spec:
+      containers:
+      - name: anime-recommender
+        image: anime-recommender:latest  # Update with your image name
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8501
+          name: streamlit
+        envFrom:
+        - secretRef:
+            name: llmops-secrets
+        - configMapRef:
+            name: llmops-config
+        volumeMounts:
+        - name: vector-store
+          mountPath: /app/chroma_db
+        - name: logs
+          mountPath: /app/logs
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /_stcore/health
+            port: 8501
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /_stcore/health
+            port: 8501
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: vector-store
+        persistentVolumeClaim:
+          claimName: llmops-pvc
+      - name: logs
+        emptyDir: {}
+
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: anime-recommender-service
+  labels:
+    app: anime-recommender
+spec:
+  type: LoadBalancer
+  selector:
+    app: anime-recommender
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8501
+    name: http

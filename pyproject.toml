@@ -1,0 +1,86 @@
+[project]
+name = "anime-recommender"
+version = "0.1.0"
+description = "An anime recommendation system using LLMs and vector embeddings"
+authors = [
+    { name = "Sudhanshu" }
+]
+readme = "FULL_DOCUMENTATION.md"
+requires-python = ">=3.10,<3.12"  # Python 3.10+ for scikit-learn compatibility
+
+# NOTE: Switched from HuggingFace embeddings to OpenAI embeddings to resolve
+# compatibility issues with sentence-transformers and huggingface-hub versions.
+dependencies = [
+    "langchain",
+    "langchain-community",
+    "langchain-groq",
+    "langchain-openai>=0.0.5",  # Added for OpenAI embeddings
+    "groq",
+    "chromadb",
+    "langchain-chroma",
+    "langchain-text-splitters",
+    "streamlit>=1.28.0",
+    "pandas>=2.3.2",
+    "python-dotenv",
+    "onnxruntime>=1.17.0,<1.19.0",  # Still needed for chromadb
+    "scikit-learn>=1.7.1",
+    "numpy<2.0",  # Use NumPy 1.x for better compatibility
+    "openai>=1.0.0",  # Required for OpenAI API
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+include = [
+    "src/**/*.py",
+    "app/**/*.py",
+    "pipeline/**/*.py",
+    "config/**/*.py",
+    "utils/**/*.py",
+    "data/*.csv",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "ipython>=8.0.0",
+    "jupyter>=1.0.0",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501", # line too long
+    "B008", # do not perform function calls in argument defaults
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
