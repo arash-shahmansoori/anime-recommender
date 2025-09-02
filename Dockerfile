@@ -17,20 +17,28 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install UV package manager
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+# Install UV package manager and verify installation
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    echo "UV installed at:" && \
+    find /root -name uv -type f 2>/dev/null || echo "UV not found"
 
 # Add UV to PATH
-ENV PATH="/root/.cargo/bin:$PATH"
+ENV PATH="/root/.local/bin:/root/.cargo/bin:$PATH"
 
 # Copy dependency files first (for better caching)
 COPY pyproject.toml ./
 
-# Install Python dependencies using UV
-# This will generate uv.lock if it doesn't exist
-RUN /root/.cargo/bin/uv venv && \
-    . .venv/bin/activate && \
-    /root/.cargo/bin/uv pip install -e .
+# Install Python dependencies
+# First try to find UV, then use it or fall back to pip
+RUN if command -v uv >/dev/null 2>&1; then \
+        echo "Using UV" && \
+        uv venv && \
+        . .venv/bin/activate && \
+        uv pip install -e .; \
+    else \
+        echo "UV not found, using pip" && \
+        pip install --no-cache-dir -e .; \
+    fi
 
 # Copy the rest of the application
 COPY . .
