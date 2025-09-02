@@ -22,9 +22,10 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.cargo/bin:$PATH"
 
 # Copy dependency files first (for better caching)
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml ./
 
 # Install Python dependencies using UV
+# This will generate uv.lock if it doesn't exist
 RUN uv venv && \
     . .venv/bin/activate && \
     uv pip install -e .
