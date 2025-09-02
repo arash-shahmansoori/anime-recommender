@@ -19,6 +19,8 @@ RUN apt-get update && apt-get install -y \
 
 # Install UV package manager
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Add UV to PATH
 ENV PATH="/root/.cargo/bin:$PATH"
 
 # Copy dependency files first (for better caching)
@@ -26,9 +28,9 @@ COPY pyproject.toml ./
 
 # Install Python dependencies using UV
 # This will generate uv.lock if it doesn't exist
-RUN uv venv && \
+RUN /root/.cargo/bin/uv venv && \
     . .venv/bin/activate && \
-    uv pip install -e .
+    /root/.cargo/bin/uv pip install -e .
 
 # Copy the rest of the application
 COPY . .
