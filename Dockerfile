@@ -55,7 +55,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
     CMD curl -f http://localhost:8501/_stcore/health || exit 1
 
 # Set Python path to include the app directory
-ENV PYTHONPATH=/app:$PYTHONPATH
+ENV PYTHONPATH=/app
 
 # Run the app using UV environment
 CMD ["/app/.venv/bin/streamlit", "run", "app/app.py", \
